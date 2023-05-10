@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>My Resume CLI</title>
+    <style>
+      /* Add some basic styling to the CLI */
+      body {
+        background-color: black;
+        color: white;
+        font-family: monospace;
+        font-size: 14px;
+      }
+      
+      span {
+  display: flex;
+  align-items: center;
+}
+
+      .command-line {
+  	color: green;
+  	white-space: pre-wrap;
+	}
+
+      
+      #prompt {
+        color: green;
+       
+      }
+      
+      
+      #input {
+  background-color: black;
+  border: none;
+  color: green;
+  font-family: monospace;
+  font-size: 14px;
+  outline: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+}
+      
+      #output {
+  	white-space: pre-wrap;
+  	 margin-bottom: 0;
+	}
+
+    </style>
+  </head>
+  <body>
+    <pre id="output"></pre>
+   <span>
+  <div id="prompt">$ </div><input type="text" id="input" autofocus>
+</span>
+
+    <script>
+      const output = document.getElementById('output');
+      const input = document.getElementById('input');
+      const prompt = document.getElementById('prompt');
+      const commands = [
+       	{
+          name: 'whoami',
+          description: 'display my summary statement'
+        },
+        {
+          name: 'exp',
+          description: '	display job experience'
+        },
+        {
+          name: 'resp',
+          description: '	display responsibilites'
+        },
+        {
+          name: 'certs',
+          description: '	display certifications'
+        },
+        {
+          name: 'edu',
+          description: '	display education'
+        },
+         {
+          name: 'link',
+          description: '	display linkedin'
+        },
+        {
+          name: 'help',
+          description: '	display this help message'
+        }
+      ];
+      let commandHistory = [];
+      let commandIndex = -1;
+      
+   function handleCommand(command) {
+  switch (command.toLowerCase()) {
+    case 'whoami':
+      displayOutputCharByChar('My name is Mike Dame.\nI am a passionate Cyber Security Specialist with over 5 years of lead experience working in Red Teaming and Penetration Testing.\nI have 13 years of progressive work experience and strive to seek challenging assignments and responsibilities, advancing growth and development for myself and everyone on my team.');
+      break;
+    case 'exp':
+      displayOutputCharByChar('Sr. Offensive Security Consultant	Soteria		SC	Dec 2020 -> Present\nRed Team Lead				General Motors	MI	Nov 2019 -> Dec 2020\nRed Team Penetration Tester		Ford		MI	Jul 2018 -> Nov 2019\nFounder and Owner			Resec LLC	MI	Jan 2019 -> Present');
+      break;
+      case 'resp':
+     displayOutputCharByChar('Lead internal, external, web application, cloud, mobile, wireless, and physical penetration tests and lead Red and Purple team engagements to meet client security needs.\nInterface directly with clients for initial questions, infrastructure specifications and access obtainment, kickoff meetings, Rules of Engagement completion, and regular status updates throughout the testing process.\nDiscover critical and high risk vulnerabilities affecting assets and infrastructure and provide specific, detailed remediations and mitigation strategies to prevent monetary and data loss and reputational damage to our clients.\nCreate and deliver detailed, technical reports tailored to specific needs and requirements of our clients.\nExceed client expectations and adapt to new and challenging environments across multiple fields including finance, education, healthcare, local government, transportation, energy, private equity, insurance, agriculture, voting, games industry, space technology.');
+      break;
+     case 'link':
+  displayOutputCharByChar('https://www.linkedin.com/in/mike-dame-07a985193/');
+  break;
+    case 'certs':
+      displayOutputCharByChar('Offensive Security Certified Professional			OSCP		Sep 2021\neLearnSecurity Certified Professional Penetration Tester	eCCPTv2		Mar 2020\nCertified Red Team Professional					CRTP		Feb 2021\nPractical Network Penetration Tester				PNPT		May 2021\nCertified Red Team Operator					CRTO		Aug 2022');
+      break;
+    case 'edu':
+     displayOutputCharByChar('M.A. - Information Assurance & Cyber Defense, May 2019\nUniversity of Detroit Mercy, Detroit, MI, GPA 4.0, Summa Cum Laude\nB.S. - Information Assurance & Cyber Defense, April 2018\nEastern Michigan University, Ypsilanti, MI, GPA 3.9, Dean’s List 2 years');
+      break;
+    case 'help':
+      const welcomeMessage = 'Welcome to my Resume. Try the following commands:\n';
+     const commandList = commands.map(cmd => `${cmd.name}: ${cmd.description}`).join('\n');
+displayOutputCharByChar(welcomeMessage, function() {
+  output.innerHTML += commandList + '\n';
+});
+      break;
+    case '?':
+      handleCommand('help');
+      break;
+    case 'clear':
+      output.innerHTML = '';
+      break;
+    default:
+      output.innerHTML += `Unknown command: ${command}<br>Try 'help' instead`;
+      break;
+  }
+}
+
+
+      
+      function displayPrompt() {
+        prompt.innerHTML = '$ ';
+        input.value = '';
+        input.style.color = 'green';
+        input.focus();
+      }
+      
+      function displayOutput(text) {
+        output.innerHTML += text;
+      }
+      
+function displayOutputCharByChar(text, callback) {
+  let i = 0;
+  function displayChar() {
+    if (i < text.length) {
+      output.innerHTML += (text.charAt(i) === '\n') ? '<br>' : text.charAt(i);
+      i++;
+      setTimeout(displayChar, 20);
+    } else {
+      if (callback) {
+        callback();
+      }
+    }
+  }
+  displayChar();
+}
+
+      
+      function sanitizeInput(input) {
+  return input.replace(/[&<>"'`=\/]/g, function (char) {
+    switch (char) {
+      case '&':
+        return '&amp;';
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '"':
+        return '&quot;';
+      case "'":
+        return '&#39;';
+      case '`':
+        return '&#x60;';
+      case '=':
+        return '&#x3D;';
+      case '/':
+        return '&#x2F;';
+    }
+  });
+}
+      
+      function handleInput() {
+ 	 const command = sanitizeInput(input.value.trim());
+ 	 if (command !== '') {
+  	  commandHistory.unshift(command);
+   	 commandIndex = -1;
+  	}
+ 	 const commandLine = document.createElement('div');
+ 	 commandLine.classList.add('command-line');
+ 	 commandLine.textContent = `$${command}`;
+ 	 output.appendChild(commandLine);
+ 	 handleCommand(command);
+ 	 displayPrompt();
+	}
+
+      
+      function handleCommandHistory(event) {
+        if (event.keyCode === 38 || event.keyCode === 40) {
+          event.preventDefault();
+          if (commandHistory.length > 0) {
+            if (event.keyCode === 38 && commandIndex < commandHistory.length - 1) {
+              commandIndex++;
+            } else if (event.keyCode === 40 && commandIndex >= 0) {
+              commandIndex--;
+            }
+            const command = commandHistory[commandIndex] || '';
+            input.value = command;
+            input.style.color = 'green';
+          }
+        }
+      }
+      
+      displayPrompt();
+      input.addEventListener('keyup', function(event) {
+        if (event.keyCode === 13) {
+          handleInput();
+        }
+      });
+      input.addEventListener('keydown', handleCommandHistory);
+    </script>
+  </body>
+</html>
